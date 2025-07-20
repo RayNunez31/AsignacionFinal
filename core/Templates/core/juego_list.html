@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-6">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-4xl font-bold">Juegos</h1>
+    <a href="{% url 'juego-create' %}" class="btn btn-primary">+ Crear Juego</a>
+  </div>
+
+  <div class="overflow-x-auto bg-base-100 shadow-lg rounded-xl">
+    <table class="table table-zebra w-full">
+      <thead class="bg-base-200">
+        <tr>
+          <th>Descripción</th>
+          <th>Equipo A</th>
+          <th>Equipo B</th>
+          <th>Fecha</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for juego in object_list %}
+        <tr>
+          <td>{{ juego.descripcion }}</td>
+          <td>{{ juego.equipo_a }}</td>
+          <td>{{ juego.equipo_b }}</td>
+          <td>{{ juego.fecha }}</td>
+          <td class="text-center space-x-1">
+            <a href="{% url 'juego-dashboard' juego.pk %}" class="btn btn-sm btn-primary">📊 Insertar Estadisticas</a>
+            <a href="{% url 'juego-edit' juego.pk %}" class="btn btn-sm btn-info">✏️ Editar</a>
+            <a href="{% url 'juego-delete' juego.pk %}" class="btn btn-sm btn-error">🗑️ Eliminar</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-gray-400 py-4">No hay juegos registrados.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

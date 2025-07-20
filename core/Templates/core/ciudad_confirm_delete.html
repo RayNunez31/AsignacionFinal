@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2 class="text-xl mb-4">¿Está seguro que desea eliminar "{{ object.nombre }}"?</h2>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-error">Eliminar</button>
+  <a href="{% url 'ciudad-list' %}" class="btn btn-outline">Cancelar</a>
+</form>
+{% endblock %}

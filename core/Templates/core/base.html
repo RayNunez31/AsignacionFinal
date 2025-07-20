@@ -1,0 +1,45 @@
+<!-- templates/core/base.html -->
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.1/dist/full.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-base-200">
+
+    <div class="drawer lg:drawer-open min-h-screen">
+        <input id="sidebar" type="checkbox" class="drawer-toggle" />
+        <div class="drawer-content flex flex-col">
+            <!-- Navbar -->
+            <div class="w-full navbar bg-base-100 shadow px-4">
+                <div class="flex-1 text-xl font-bold">🏆 Torneo</div>
+            </div>
+
+            <!-- Page Content -->
+            <main class="p-6">
+                {% block content %}{% endblock %}
+            </main>
+        </div> 
+
+        <!-- Sidebar -->
+        <div class="drawer-side">
+            <label for="sidebar" class="drawer-overlay"></label>
+            <aside class="w-64 min-h-full bg-white text-base-content shadow-lg">
+                <div class="p-4 text-lg font-bold text-primary">Hola, Admin</div>
+                <ul class="menu p-2">
+                    <li><a href="{% url 'ciudad-list' %}">🌍 Ciudades</a></li>
+                    <li><a href="{% url 'equipo-list' %}">🏅 Equipos</a></li>
+                    <li><a href="{% url 'jugador-list' %}">🧍 Jugadores</a></li>
+                    <li><a href="{% url 'juego-list' %}">🎮 Juegos</a></li>
+                    <li><a href="{% url 'estadistica-list' %}">📊 Estadísticas</a></li>
+                    <li><a href="{% url 'estadisticajuego-list' %}">📈 Estadísticas Juego</a></li>
+                </ul>
+            </aside>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow space-y-6">
+  <h2 class="text-2xl font-bold text-primary">
+    {{ titulo_formulario }}
+  </h2>
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    {% for field in form %}
+      <div>
+        <label class="label">
+          <span class="label-text font-semibold">{{ field.label }}</span>
+        </label>
+
+        {% if field.field.widget.input_type == "select" %}
+          <select name="{{ field.name }}" class="select select-bordered w-full">
+            {% for choice in field.field.choices %}
+              <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>
+                {{ choice.1 }}
+              </option>
+            {% endfor %}
+          </select>
+
+        {% elif field.field.widget.input_type == "textarea" %}
+          <textarea name="{{ field.name }}" class="textarea textarea-bordered w-full">{{ field.value }}</textarea>
+
+        {% else %}
+          <input type="{{ field.field.widget.input_type }}"
+                 name="{{ field.name }}"
+                 value="{{ field.value|default_if_none:'' }}"
+                 class="input input-bordered w-full" />
+        {% endif %}
+
+        {% if field.errors %}
+          <p class="text-red-500 text-sm mt-1">{{ field.errors.0 }}</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="pt-4">
+      <button type="submit" class="btn btn-primary w-full">💾 Guardar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}
