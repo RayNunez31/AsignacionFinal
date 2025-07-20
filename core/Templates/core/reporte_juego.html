@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow space-y-2 font-mono">
+  <h1 class="text-3xl font-bold mb-4 text-primary">Reporte del Juego</h1>
+  <pre class="bg-gray-100 p-4 rounded overflow-auto text-sm">
+{% for linea in lineas %}
+{{ linea }}
+{% endfor %}
+  </pre>
+  <div class="mt-6">
+    <a href="javascript:history.back()" class="btn btn-outline">Volver</a>
+  </div>
+</div>
+{% endblock %}

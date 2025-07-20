@@ -9,6 +9,8 @@ from .views import (
 )
 
 urlpatterns = [
+
+
     path('ciudades/', CiudadListView.as_view(), name='ciudad-list'),
     path('ciudades/crear/', CiudadCreateView.as_view(), name='ciudad-create'),
     path('ciudades/<str:pk>/editar/', CiudadUpdateView.as_view(), name='ciudad-edit'),

@@ -4,6 +4,10 @@ from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from .models import Ciudad, Equipo, Jugador, Juego, Estadistica, EstadisticaJuego
 from .forms import JugadorForm, JuegoForm, EstadisticaJuegoInlineForm  
+from django.db import connection
+from django.shortcuts import render
+from collections import defaultdict
+from django.db.models import Sum
 
 
 class JuegoDashboardView(TemplateView):
@@ -13,27 +17,43 @@ class JuegoDashboardView(TemplateView):
         context = super().get_context_data(**kwargs)
         juego = get_object_or_404(Juego, pk=kwargs['pk'])
 
+        estadisticas = EstadisticaJuego.objects.filter(juego=juego).select_related('jugador', 'estadistica')
+
+        tipos_estadistica = Estadistica.objects.all()
         jugadores = Jugador.objects.filter(equipo__in=[juego.equipo_a, juego.equipo_b])
-        estadisticas = EstadisticaJuego.objects.filter(juego=juego)
+
+        def agrupar_estadisticas(jugadores_equipo):
+            resultado = []
+            for jugador in jugadores_equipo:
+                fila = {
+                    'jugador': jugador,
+                    'estadisticas': []
+                }
+                for tipo in tipos_estadistica:
+                    total = sum(e.cantidad for e in estadisticas if e.jugador == jugador and e.estadistica == tipo)
+                    fila['estadisticas'].append({'tipo': tipo.descripcion, 'cantidad': total})
+                resultado.append(fila)
+            return resultado
 
         context.update({
             'juego': juego,
-            'jugadores': jugadores,
-            'estadisticas': estadisticas,
             'form': EstadisticaJuegoInlineForm(juego=juego),
+            'tipos_estadistica': tipos_estadistica,
+            'equipo_a_nombre': juego.equipo_a.nombre,
+            'equipo_b_nombre': juego.equipo_b.nombre,
+            'equipo_a_estadisticas': agrupar_estadisticas(jugadores.filter(equipo=juego.equipo_a)),
+            'equipo_b_estadisticas': agrupar_estadisticas(jugadores.filter(equipo=juego.equipo_b)),
         })
         return context
 
     def post(self, request, *args, **kwargs):
         juego = get_object_or_404(Juego, pk=kwargs['pk'])
         form = EstadisticaJuegoInlineForm(request.POST, juego=juego)
-
         if form.is_valid():
-            nueva = form.save(commit=False)
-            nueva.juego = juego
-            nueva.save()
+            instancia = form.save(commit=False)
+            instancia.juego = juego
+            instancia.save()
             return redirect('juego-dashboard', pk=juego.pk)
-
         context = self.get_context_data(**kwargs)
         context['form'] = form
         return self.render_to_response(context)

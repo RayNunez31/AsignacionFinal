@@ -1,57 +1,103 @@
 {% extends 'core/base.html' %}
 {% block content %}
-<div class="space-y-6 max-w-6xl mx-auto">
-  <div class="bg-white p-6 shadow rounded-xl">
-    <h2 class="text-2xl font-bold mb-2">Juego: {{ juego.descripcion }}</h2>
+<div class="max-w-6xl mx-auto space-y-8">
+
+  <!-- Información del juego -->
+  <div class="bg-white shadow p-6 rounded-xl">
+    <h2 class="text-2xl font-bold">Dashboard del Juego</h2>
+    <p><strong>Juego:</strong> {{ juego.descripcion }}</p>
     <p><strong>Fecha:</strong> {{ juego.fecha }}</p>
     <p><strong>Equipos:</strong> {{ juego.equipo_a }} vs {{ juego.equipo_b }}</p>
   </div>
 
+  <!-- Tablas de estadísticas de los equipos -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="bg-white p-6 shadow rounded-xl">
-      <h3 class="text-xl font-semibold mb-4">Registrar Estadística</h3>
-      <form method="post">
-        {% csrf_token %}
-        <div class="space-y-4">
-          {% for field in form %}
+
+    <!-- Equipo A -->
+    <div class="bg-gray-50 p-4 rounded-xl shadow">
+      <h3 class="text-xl font-semibold mb-2 text-center">{{ equipo_a_nombre }}</h3>
+
+      {% if equipo_a_estadisticas %}
+        <div class="overflow-auto">
+          <table class="table table-zebra w-full text-sm">
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                {% for tipo in tipos_estadistica %}
+                  <th>{{ tipo.descripcion }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for fila in equipo_a_estadisticas %}
+              <tr>
+                <td>{{ fila.jugador }}</td>
+                {% for stat in fila.estadisticas %}
+                  <td>{{ stat.cantidad }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-500 text-center">No hay estadísticas registradas para este equipo.</p>
+      {% endif %}
+    </div>
+
+    <!-- Equipo B -->
+    <div class="bg-gray-50 p-4 rounded-xl shadow">
+      <h3 class="text-xl font-semibold mb-2 text-center">{{ equipo_b_nombre }}</h3>
+
+      {% if equipo_b_estadisticas %}
+        <div class="overflow-auto">
+          <table class="table table-zebra w-full text-sm">
+            <thead>
+              <tr>
+                <th>Jugador</th>
+                {% for tipo in tipos_estadistica %}
+                  <th>{{ tipo.descripcion }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for fila in equipo_b_estadisticas %}
+              <tr>
+                <td>{{ fila.jugador }}</td>
+                {% for stat in fila.estadisticas %}
+                  <td>{{ stat.cantidad }}</td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <p class="text-gray-500 text-center">No hay estadísticas registradas para este equipo.</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Formulario para registrar estadísticas -->
+  <div class="bg-white shadow p-6 rounded-xl">
+    <h3 class="text-xl font-semibold mb-4">Registrar Estadística</h3>
+    <form method="post">
+      {% csrf_token %}
+      <div class="grid gap-4">
+        {% for field in form %}
           <div>
             <label class="label font-semibold">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}
-              <p class="text-error text-sm">{{ field.errors.0 }}</p>
+              <p class="text-red-500 text-sm">{{ field.errors.0 }}</p>
             {% endif %}
           </div>
-          {% endfor %}
-          <button type="submit" class="btn btn-primary w-full">Agregar</button>
-        </div>
-      </form>
-    </div>
-
-    <div class="bg-white p-6 shadow rounded-xl">
-      <h3 class="text-xl font-semibold mb-4">Estadísticas registradas</h3>
-      {% if estadisticas %}
-        <table class="table table-zebra w-full">
-          <thead>
-            <tr>
-              <th>Jugador</th>
-              <th>Estadística</th>
-              <th>Cantidad</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for e in estadisticas %}
-            <tr>
-              <td>{{ e.jugador }}</td>
-              <td>{{ e.estadistica }}</td>
-              <td>{{ e.cantidad }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <p class="text-gray-500">No hay estadísticas registradas aún.</p>
-      {% endif %}
-    </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary w-full">Agregar</button>
+      </div>
+    </form>
   </div>
+
 </div>
 {% endblock %}
