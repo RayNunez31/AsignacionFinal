@@ -25,6 +25,7 @@
           <td>{{ juego.equipo_b }}</td>
           <td>{{ juego.fecha }}</td>
           <td class="text-center space-x-1">
+            <a href="{% url 'estadistica' juego.pk %}" class="btn btn-sm btn-secondary">📈 Ver Estadísticas</a>
             <a href="{% url 'juego-dashboard' juego.pk %}" class="btn btn-sm btn-primary">📊 Insertar Estadisticas</a>
             <a href="{% url 'juego-edit' juego.pk %}" class="btn btn-sm btn-info">✏️ Editar</a>
             <a href="{% url 'juego-delete' juego.pk %}" class="btn btn-sm btn-error">🗑️ Eliminar</a>

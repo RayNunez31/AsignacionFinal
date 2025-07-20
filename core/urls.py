@@ -5,11 +5,14 @@ from .views import (
     JugadorListView, JugadorCreateView, JugadorUpdateView, JugadorDeleteView,
     JuegoListView, JuegoCreateView,JuegoDashboardView, JuegoUpdateView, JuegoDeleteView,
     EstadisticaListView, EstadisticaCreateView, EstadisticaUpdateView, EstadisticaDeleteView,
-    EstadisticajuegoListView, EstadisticajuegoCreateView, EstadisticajuegoUpdateView, EstadisticajuegoDeleteView,
+    EstadisticajuegoListView,estadisticas_juego, DashboardView, EstadisticajuegoCreateView, EstadisticajuegoUpdateView, EstadisticajuegoDeleteView,
 )
 
 urlpatterns = [
+    path('estadistica/<str:id_juego>/', estadisticas_juego, name='estadistica'),
 
+    # core/urls.py
+    path("", DashboardView.as_view(), name="dashboard"),
 
     path('ciudades/', CiudadListView.as_view(), name='ciudad-list'),
     path('ciudades/crear/', CiudadCreateView.as_view(), name='ciudad-create'),

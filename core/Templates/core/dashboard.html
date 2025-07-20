@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Panel de Control</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="card bg-white shadow p-4">
+        <h2 class="text-sm text-gray-500">Jugadores Totales</h2>
+        <p class="text-2xl font-bold text-primary">{{ total_jugadores }}</p>
+    </div>
+    <div class="card bg-white shadow p-4">
+        <h2 class="text-sm text-gray-500">Equipos Activos</h2>
+        <p class="text-2xl font-bold text-primary">{{ equipos_activos }}</p>
+    </div>
+    <div class="card bg-white shadow p-4">
+        <h2 class="text-sm text-gray-500">Partidos este Mes</h2>
+        <p class="text-2xl font-bold text-primary">{{ juegos_este_mes }}</p>
+    </div>
+    <div class="card bg-white shadow p-4">
+        <h2 class="text-sm text-gray-500">MVP Actual</h2>
+        <p class="text-2xl font-bold text-primary">{{ mvp }}</p>
+    </div>
+</div>
+
+<div class="mb-10">
+    <h2 class="text-xl font-semibold mb-4">📅 Próximos Juegos</h2>
+    {% if juegos %}
+        <div class="overflow-x-auto">
+            <table class="table table-zebra w-full bg-white rounded-lg">
+                <thead class="bg-base-200">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Descripción</th>
+                        <th>Equipo A</th>
+                        <th>Equipo B</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for juego in juegos %}
+                    <tr>
+                        <td>{{ juego.fecha|date:"d M Y" }}</td>
+                        <td>{{ juego.descripcion }}</td>
+                        <td>{{ juego.equipo_a.nombre }}</td>
+                        <td>{{ juego.equipo_b.nombre }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="text-gray-600">No hay juegos próximos programados.</p>
+    {% endif %}
+</div>
+
+
+{% endblock %}

@@ -1,3 +1,5 @@
+from datetime import timezone
+import json
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import TemplateView
@@ -8,7 +10,43 @@ from django.db import connection
 from django.shortcuts import render
 from collections import defaultdict
 from django.db.models import Sum
+from datetime import datetime
+from django.utils.dateformat import DateFormat
+from django.utils.timezone import now
 
+class DashboardView(TemplateView):
+    template_name = 'core/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Métricas generales
+        context['total_jugadores'] = Jugador.objects.count()
+        context['equipos_activos'] = Equipo.objects.count()
+        context['juegos_este_mes'] = Juego.objects.filter(fecha__month=now().month).count()
+
+        # MVP: jugador con más puntos (usando descripcion)
+        puntos = EstadisticaJuego.objects.filter(estadistica__descripcion='Puntos')
+        mvp = puntos.values('jugador__nombre').annotate(total=Sum('cantidad')).order_by('-total').first()
+        context['mvp'] = mvp['jugador__nombre'] if mvp else 'N/A'
+
+        # Próximos juegos
+        context['juegos'] = Juego.objects.filter(fecha__gte=now()).order_by('fecha')[:5]
+
+        # Posesión por equipo (solo mostrando totales)
+        estadisticas_posesion = EstadisticaJuego.objects.filter(estadistica__descripcion='Posesión')
+        posesion = estadisticas_posesion.values('jugador__equipo__nombre').annotate(total=Sum('cantidad')).order_by('-total')
+        context['posesion_equipos'] = posesion
+
+        return context
+    
+def estadisticas_juego(request, id_juego):
+    with connection.cursor() as cursor:
+        cursor.execute("EXEC ObtenerEstadisticasJuego %s", [id_juego])
+        columns = [col[0] for col in cursor.description]
+        resultados = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+    return render(request, 'core/estadistica.html', {'resultados': resultados})
 
 class JuegoDashboardView(TemplateView):
     template_name = 'core/juego_dashboard.html'
@@ -142,7 +180,7 @@ class JugadorCreateView(CreateView):
 
 class JugadorUpdateView(UpdateView):
     model = Jugador
-    form_class = JugadorForm            # <—
+    form_class = JugadorForm         
     template_name = 'core/form.html'
     success_url = reverse_lazy('jugador-list')
 

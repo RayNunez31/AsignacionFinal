@@ -30,12 +30,12 @@
             <aside class="w-64 min-h-full bg-white text-base-content shadow-lg">
                 <div class="p-4 text-lg font-bold text-primary">Hola, Admin</div>
                 <ul class="menu p-2">
+                    <li><a href="{% url 'dashboard' %}">📋 Dashboard</a></li>
                     <li><a href="{% url 'ciudad-list' %}">🌍 Ciudades</a></li>
                     <li><a href="{% url 'equipo-list' %}">🏅 Equipos</a></li>
                     <li><a href="{% url 'jugador-list' %}">🧍 Jugadores</a></li>
                     <li><a href="{% url 'juego-list' %}">🎮 Juegos</a></li>
                     <li><a href="{% url 'estadistica-list' %}">📊 Estadísticas</a></li>
-                    <li><a href="{% url 'estadisticajuego-list' %}">📈 Estadísticas Juego</a></li>
                 </ul>
             </aside>
         </div>

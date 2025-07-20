@@ -1,0 +1,45 @@
+{% extends "core/base.html" %}
+
+{% block title %}Estadísticas del Juego{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-6 text-center">📊 Estadísticas del Juego</h1>
+
+    {% for fila in resultados %}
+        {% if fila.Seccion %}
+            <div class="mt-8 mb-2 text-lg font-semibold text-primary">
+                {{ fila.Seccion }}
+            </div>
+        {% elif fila.Jugador and fila.Jugador == 'Total:' %}
+            <div class="bg-neutral text-neutral-content rounded-xl p-4 mb-4 shadow">
+                <h3 class="text-md font-semibold">Totales:</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2 text-sm">
+                    <div><span class="font-semibold">Puntos:</span> {{ fila.Puntos }}</div>
+                    <div><span class="font-semibold">Asistencias:</span> {{ fila.Asistencias }}</div>
+                    <div><span class="font-semibold">Rebotes:</span> {{ fila.Rebotes }}</div>
+                    <div><span class="font-semibold">Robadas:</span> {{ fila.Bolas_Robadas }}</div>
+                    <div><span class="font-semibold">Faltas:</span> {{ fila.Faltas }}</div>
+                    <div><span class="font-semibold">Técnicas:</span> {{ fila.Técnicas }}</div>
+                    <div><span class="font-semibold">Perdidas:</span> {{ fila.Bolas_Perdidas }}</div>
+                </div>
+            </div>
+        {% elif fila.Jugador %}
+            <div class="card bg-base-100 shadow-md mb-3">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-lg text-primary">{{ fila.Jugador }}</h2>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm mt-2">
+                        <div><strong>Puntos:</strong> {{ fila.Puntos }}</div>
+                        <div><strong>Asistencias:</strong> {{ fila.Asistencias }}</div>
+                        <div><strong>Rebotes:</strong> {{ fila.Rebotes }}</div>
+                        <div><strong>Robadas:</strong> {{ fila.Bolas_Robadas }}</div>
+                        <div><strong>Faltas:</strong> {{ fila.Faltas }}</div>
+                        <div><strong>Técnicas:</strong> {{ fila.Técnicas }}</div>
+                        <div><strong>Perdidas:</strong> {{ fila.Bolas_Perdidas }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
