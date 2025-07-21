@@ -16,7 +16,7 @@
         </label>
 
         {% if field.field.widget.input_type == "select" %}
-          <select name="{{ field.name }}" class="select select-bordered w-full">
+          <select id="{{ field.name }}" name="{{ field.name }}" class="select select-bordered w-full equipo-select">
             {% for choice in field.field.choices %}
               <option value="{{ choice.0 }}" {% if choice.0 == field.value %}selected{% endif %}>
                 {{ choice.1 }}
@@ -45,4 +45,33 @@
     </div>
   </form>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const equipoA = document.getElementById("equipo_a");
+    const equipoB = document.getElementById("equipo_b");
+
+    function updateSelectOptions(source, target) {
+      const selectedValue = source.value;
+      const options = target.querySelectorAll("option");
+
+      options.forEach(option => {
+        option.disabled = option.value && option.value === selectedValue;
+      });
+    }
+
+    // Inicializa deshabilitando valores cruzados si ya hay valores seleccionados
+    updateSelectOptions(equipoA, equipoB);
+    updateSelectOptions(equipoB, equipoA);
+
+    // Escuchar cambios en ambos selects
+    equipoA.addEventListener("change", () => {
+      updateSelectOptions(equipoA, equipoB);
+    });
+
+    equipoB.addEventListener("change", () => {
+      updateSelectOptions(equipoB, equipoA);
+    });
+  });
+</script>
 {% endblock %}

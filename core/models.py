@@ -62,7 +62,7 @@ class Jugador(models.Model):
 
 class Juego(models.Model):
     id = models.CharField(max_length=10, primary_key=True, db_column='IdJuego')
-    descripcion = models.CharField(max_length=25, db_column='Descripcion')
+    descripcion = models.CharField(max_length=50, db_column='Descripcion')
     equipo_a = models.ForeignKey(Equipo, on_delete=models.CASCADE, db_column='EquipoA', related_name='juegos_como_equipo_a')
     equipo_b = models.ForeignKey(Equipo, on_delete=models.CASCADE, db_column='EquipoB', related_name='juegos_como_equipo_b')
     fecha = models.DateField(db_column='Fecha')

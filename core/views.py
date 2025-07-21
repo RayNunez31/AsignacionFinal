@@ -211,7 +211,6 @@ class JuegoCreateView(CreateView):
         context['titulo_formulario'] = "Crear Juego"
         return context
 
-
 class JuegoUpdateView(UpdateView):
     model = Juego
     form_class = JuegoForm

@@ -25,7 +25,8 @@ class EstadisticaJuegoInlineForm(forms.ModelForm):
         if juego:
             equipos = [juego.equipo_a, juego.equipo_b]
             self.fields["jugador"].queryset = Jugador.objects.filter(equipo__in=equipos)
-            
+
+
 class JuegoForm(forms.ModelForm):
     class Meta:
         model = Juego
@@ -37,17 +38,27 @@ class JuegoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Mostrar todos los equipos por defecto
+        # ── Filtrado dinámico ────────────────────────────────────────────────
+        # 1) mostrar todos los equipos por defecto
         self.fields['equipo_b'].queryset = Equipo.objects.all()
 
-        # Filtrar equipo_b si equipo_a ya está seleccionado
-        if 'equipo_a' in self.data:
-            equipo_a_id = self.data.get('equipo_a')
-            if equipo_a_id:
-                self.fields['equipo_b'].queryset = Equipo.objects.exclude(id=equipo_a_id)
-        elif self.instance.pk and self.instance.equipo_a_id:
-            self.fields['equipo_b'].queryset = Equipo.objects.exclude(id=self.instance.equipo_a_id)
+        # 2) si viene equipo_a (en POST o en GET con ?equipo_a=...)
+        equipo_a_id = self.data.get('equipo_a') or getattr(self.instance, 'equipo_a_id', None)
+        if equipo_a_id:
+            self.fields['equipo_b'].queryset = Equipo.objects.exclude(id=equipo_a_id)
 
+    # ── Validación para que no se repita el mismo equipo ───────────────────
+    def clean(self):
+        cleaned_data = super().clean()
+        equipo_a = cleaned_data.get('equipo_a')
+        equipo_b = cleaned_data.get('equipo_b')
+
+        if equipo_a and equipo_b and equipo_a == equipo_b:
+            # Asignamos el error al campo equipo_b para que sea más claro
+            self.add_error('equipo_b', 'Equipo B no puede ser el mismo que Equipo A.')
+
+        return cleaned_data
+    
 class JugadorForm(forms.ModelForm):
     class Meta:
         model  = Jugador
