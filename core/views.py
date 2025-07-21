@@ -26,8 +26,19 @@ class DashboardView(TemplateView):
         context['juegos_este_mes'] = Juego.objects.filter(fecha__month=now().month).count()
 
         # MVP: jugador con más puntos (usando descripcion)
-        puntos = EstadisticaJuego.objects.filter(estadistica__descripcion='Puntos')
-        mvp = puntos.values('jugador__nombre').annotate(total=Sum('cantidad')).order_by('-total').first()
+        puntos = EstadisticaJuego.objects.filter(
+            estadistica__descripcion__in=[
+                'Puntos de dos            ',
+                'Puntos de tres           ',
+                'Tiros libres             '
+            ]
+        )
+
+        mvp = puntos.values('jugador__nombre') \
+            .annotate(total=Sum('cantidad')) \
+            .order_by('-total') \
+            .first()
+
         context['mvp'] = mvp['jugador__nombre'] if mvp else 'N/A'
 
         # Próximos juegos
